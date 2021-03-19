@@ -1,0 +1,15 @@
+@media only screen and (max-width: 991px) {
+	.spex-sampleVideo-wrp {
+		display: block;
+	}
+	.spext-frame-settings ul {
+		display: flex;
+		flex-wrap: wrap;
+	}
+	.spext-frame-settings ul li {
+		width: 50%;
+	}
+	.spext-frame-settings {
+		padding: 0;
+	}
+}
