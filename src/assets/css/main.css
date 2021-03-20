@@ -56,6 +56,7 @@ canvas {
 	overflow: hidden;
 	transition: all 0.2s ease-in-out;
 	background: #000;
+	border-radius: 25px;
 }
 .spext-lands .spect-canvas-innerWrp {
 	height: 270px;
@@ -84,11 +85,12 @@ canvas {
 	position: absolute;
 	background: #000;
 	color: #FFE456;
-	padding: 3px 5px;
+	padding: 3px 6px;
 	bottom: 25px;
 	width: calc(100% - 30px);
 	margin: 0 10px;
 	text-align: left;
+	border-radius: 4px;
 }
 .spext-hdg {
 	font-size: 22px;
