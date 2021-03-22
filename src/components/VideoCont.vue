@@ -45,11 +45,11 @@
         <div class="spext-flex spext-frame-ctrls">
             <div class="spext-play-btn">
                 <img :src="require('../assets/img/icons/play_icon.svg')" v-if="!pauseFrame" v-on:click="StartAnimation(); pauseFrame = true">
-                <img :src="require('../assets/img/icons/pause_icon.svg')" v-if="pauseFrame" v-on:click="AnimateNow(PauseAnimaton()); pauseFrame = false">
+                <img :src="require('../assets/img/icons/pause_icon.svg')" v-if="pauseFrame" v-on:click="pauseFrame = false">
             </div>
             <input type="text" name="text" v-model="message" placeholder="Enter Subtitle Text here">
             <div>
-                <a class="spext-btn spext-addFrame-btn" v-on:click="isHidden = false; AnimateNow(PauseAnimaton());" v-if="isHidden">Add a frame</a>
+                <a class="spext-btn spext-addFrame-btn" v-on:click="isHidden = false; AnimateNow(addFrameBtn());" v-if="isHidden">Add a frame</a>
                 <div class="spext-relative" v-if="!isHidden">
                     <div v-if="!addFrame">
                         <span class="spext-close-btn spext-flex-center" v-on:click="isHidden = true">x</span>
@@ -83,7 +83,8 @@
             addFrame: false,
             fileName: null,
             frameTime: null,
-            isPlaying: false
+            isPlaying: false,
+            currFrame: 0
         }),
         methods: {
             StartAnimation: function() {
@@ -92,16 +93,11 @@
             },
 
             AnimateNow: function() {
-                let imgNumber = 1;
-                let framesCount = 11272;
                 let canvas = this.$refs.canvas;
                 let ctx = canvas.getContext('2d');
                 var img = new Image;
 
-                let imgPath = 'frames/s_000#####.jpg';
-                let replacee = imgPath.match(/#/g).join('');
-                let suffix = replacee.replace(/#/g, '0');
-                let secs = 0; let currFrame = 0;
+                let secs = 0;
 
                 img.onload = function(){
                     ctx.clearRect( 0, 0, ctx.canvas.width, ctx.canvas.height );
@@ -109,16 +105,22 @@
                     // ctx.font = "20px Calibri";
                     // ctx.fillText(this.message, 10, 10);
                 };
+
                 if(this.isPlaying) {
-                    var timer = setInterval( function(){
-                    secs++
-                    if (imgNumber > framesCount){
-                        clearInterval(timer);
+                    const req = require.context('../assets/frames/', true, /\.(png|jpe?g|svg)$/);
+                    var array = req.keys();
+                    var index = 0;
+                    var timer = setInterval(function(){
+                        secs++
+                        console.log('frames/' + array[index++].split('/')[1]);
+                        if(index == array.length){
+                            clearInterval(timer);
                         } else {
-                            let src = imgPath.replace(replacee, (suffix.substring(1) + imgNumber++).slice(suffix.length * -1));
+                            let src = 'frames/' + array[index++].split('/')[1];
+                            console.log(src)
                             img.src = src
-                        }
-                    }, 1000/10 ); //Draw at 10 frames per second
+                         }
+                    }, 1000/10);
                 }                    
 
                 // console.log(this.isPlaying);
@@ -127,12 +129,20 @@
                 this.PauseAnimaton = function () {
                   clearInterval(timer);
                   this.isPlaying = false;
+                  this.currFrame = secs;
                   // console.log(secs);
-                  this.frameTime = Math.round(secs/10);
                 };
 
+                this.addFrameBtn = function() {
+                    clearInterval(timer);
+                    this.isPlaying = false;
+                    this.frameTime = Math.round(secs/10);
+                }
+
                 this.addFrameToCanvas = function() {
-                    console.log("currFrame");
+                    console.log(this.currFrame);
+                    framesCount++
+                    console.log(framesCount);
                 }
             },
 
