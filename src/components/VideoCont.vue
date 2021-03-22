@@ -136,13 +136,12 @@
                 this.addFrameBtn = function() {
                     clearInterval(timer);
                     this.isPlaying = false;
+                    this.currFrame = secs;
                     this.frameTime = Math.round(secs/10);
                 }
 
                 this.addFrameToCanvas = function() {
                     console.log(this.currFrame);
-                    framesCount++
-                    console.log(framesCount);
                 }
             },
 
