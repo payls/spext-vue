@@ -84,7 +84,9 @@
             fileName: null,
             frameTime: null,
             isPlaying: false,
-            currFrame: 0
+            currFrame: 0,
+            uploadedFrame: '',
+            frameArr: []
         }),
         methods: {
             StartAnimation: function() {
@@ -106,18 +108,22 @@
                     // ctx.fillText(this.message, 10, 10);
                 };
 
+                const req = require.context('../assets/frames/', true, /\.(png|jpe?g|svg)$/);
+                var arr = req.keys();
+                var index = 0;
+
+                this.frameArr = arr;
+
+                // console.log(this.frameArr);
+
                 if(this.isPlaying) {
-                    const req = require.context('../assets/frames/', true, /\.(png|jpe?g|svg)$/);
-                    var array = req.keys();
-                    var index = 0;
                     var timer = setInterval(function(){
                         secs++
-                        console.log('frames/' + array[index++].split('/')[1]);
-                        if(index == array.length){
+                        if(index == arr.length){
                             clearInterval(timer);
                         } else {
-                            let src = 'frames/' + array[index++].split('/')[1];
-                            console.log(src)
+                            // let src = 'frames/' + arr[index++].split('/')[1];
+                            let src = req(arr[index++]);
                             img.src = src
                          }
                     }, 1000/10);
@@ -129,19 +135,25 @@
                 this.PauseAnimaton = function () {
                   clearInterval(timer);
                   this.isPlaying = false;
-                  this.currFrame = secs;
+                  this.currFrame = index;
                   // console.log(secs);
                 };
 
                 this.addFrameBtn = function() {
                     clearInterval(timer);
                     this.isPlaying = false;
-                    this.currFrame = secs;
+                    this.currFrame = index;
                     this.frameTime = Math.round(secs/10);
                 }
 
                 this.addFrameToCanvas = function() {
-                    console.log(this.currFrame);
+                    let reader = new FileReader();
+                    reader.readAsDataURL(this.uploadedFrame);
+                    reader.onload = (event) => {
+                        this.uploadedFrame = event.target.result;
+                        this.frameArr.splice(this.currFrame, 0, this.uploadedFrame);
+                        console.log(this.frameArr);
+                    }
                 }
             },
 
@@ -160,9 +172,9 @@
 
             // Input file name function
             onFileChange(event){
-               var fileData =  event.target.files[0];
-               this.fileName = fileData.name;
-               this.addFrame = true
+               this.uploadedFrame =  event.target.files[0];
+               this.fileName = this.uploadedFrame.name;
+               this.addFrame = true;
             }
         },
         mounted: function (){
