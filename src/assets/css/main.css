@@ -229,3 +229,7 @@ input[type="file"] {
 	margin: 4px 0 0;
 	padding: 2px 0 0;
 }
+.spextDisabled {
+	filter: grayscale(100%);
+	pointer-events: none;
+}

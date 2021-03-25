@@ -44,7 +44,7 @@
         </div>
         <div class="spext-flex spext-frame-ctrls">
             <div class="spext-play-btn">
-                <img :src="require('../assets/img/icons/play_icon.svg')" v-if="!pauseFrame" v-on:click="StartAnimation(); pauseFrame = true">
+                <img :src="require('../assets/img/icons/play_icon.svg')" v-if="!pauseFrame" v-bind:class="{spextDisabled: disabled}" v-on:click="StartAnimation(); pauseFrame = true">
                 <img :src="require('../assets/img/icons/pause_icon.svg')" v-if="pauseFrame" v-on:click="pauseFrame = false">
             </div>
             <input type="text" name="text" v-model="message" placeholder="Enter Subtitle Text here">
@@ -86,7 +86,8 @@
             isPlaying: false,
             currFrame: 0,
             uploadedFrame: '',
-            frameArr: []
+            frameArr: [],
+            disabled: false
         }),
         methods: {
             StartAnimation: function() {
@@ -144,9 +145,12 @@
                     this.isPlaying = false;
                     this.currFrame = index;
                     this.frameTime = Math.round(secs/10);
+                    this.pauseFrame = false;
+                    this.disabled = true
                 }
 
                 this.addFrameToCanvas = function() {
+                    this.disabled = false
                     let reader = new FileReader();
                     reader.readAsDataURL(this.uploadedFrame);
                     reader.onload = (event) => {
